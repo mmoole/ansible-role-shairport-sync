@@ -1,10 +1,17 @@
+# Rolle um shairportsync zu installieren
+
+# Quellen dazu: https://github.com/mikebrady/shairport-sync
+
 - name: install dependencies
   package:
     name: '{{ item }}'
-    state: latest
+    state: present
   with_items:
+  - build-essential
   - git
+  - xmltoman
   - autoconf
+  - automake
   - libtool
   - libdaemon-dev
   - libasound2-dev
@@ -15,28 +22,49 @@
   - libssl-dev
   register: deps
 
-- name: git clone
+# vorher jedoch Apple Lossless Audio Codec installieren
+# damit dieser genutzt werden kann
+- name: git clone Apple Lossless Audio Codec from github.com/mikebrady/alac
   git:
-    depth: 1
-    dest: /usr/src/shairport-sync
-    repo: https://github.com/mikebrady/shairport-sync.git
-  register: git
+    depth: 2
+    dest: /usr/src/alac
+    repo: https://github.com/mikebrady/alac.git
+  register: git_alac
 
-- name: create user
+- name: install Apple Lossless Audio Codec via script
+  script: install_alac.sh
+  become: true
+  become_method: sudo
+  when: git_alac.changed
+  register: install_alac
+  notify: restart shairport-sync
+
+# nun fortfahren mit shairport-sync
+- name: create user shairport-sync
   user:
     name: shairport-sync
     groups: audio
     append: yes
     state: present
 
-- name: compile
-  script: compile.sh
-  when: deps.changed or git.changed
+- name: git clone shairport-sync from github.com/mikebrady/shairport-sync
+  git:
+    depth: 1
+    dest: /usr/src/shairport-sync
+    repo: https://github.com/mikebrady/shairport-sync.git
+  register: git_shairportsync
   notify: restart shairport-sync
 
-- name: create config
+- name: build and install shairport-sync via script
+  script: install_shairport-sync.sh
+  become: true
+  become_method: sudo
+  when: git_shairportsync.changed or deps.changed
+  notify: restart shairport-sync
+
+- name: copy configuration file
   copy:
-    content: '{{ conf }}'
+    content: '{{ shairportsync_config }}'
     dest: /etc/shairport-sync.conf
     mode: '0644'
   notify: restart shairport-sync
@@ -46,4 +74,3 @@
     name: shairport-sync
     enabled: yes
     state: started
-

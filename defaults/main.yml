@@ -1,4 +1,60 @@
 ---
+# This file contains defaults for variables used in roles
 
-conf: ''
+# log_verbosity 0: none, 1...3 to get more, logs to system log
+log_verbosity: 0
 
+# name of the speaker
+speakername: "{{ inventory_hostname }} AirSound"
+
+# output backend for config
+output_backend: alsa
+
+# set this to "yes" if you want the volume to be at 100% no matter what the source's volume control is set to.
+# default is: no
+# needs to be set in quotes, otherwise ansible will expand it to true/false
+ignore_volume_control: "yes"
+
+# This can be "hammerton" or "apple". This advanced setting allows you to choose the original Shairport decoder by David Hammerton or the Apple Lossless Audio Codec (ALAC) decoder written by Apple.
+alac_decoder: apple
+
+# default alsa device for output
+alsa_device: sysdefault
+
+
+# Instead of cutomizing some values (above), you can also customize the whole configuration file per the following variable.
+# in YAML values can span multiple lines using | or >. Spanning multiple lines using a | will include the newlines. Using a > will ignore newlines; it’s used to make what would otherwise be a very long line easier to read and edit. In either case the indentation will be ignored
+# the whole content of the shairport-sync config file is put in this variable:
+shairportsync_config:  |
+  // # shairport-sync configuration file
+  // see https://github.com/mikebrady/shairport-sync/blob/master/scripts/shairport-sync.conf
+  // General Settings
+  general =
+  {
+    name = "{{ speakername }}";
+    // password = "secret";
+    // interpolation = "basic";
+    output_backend = "{{ output_backend }}";
+    mdns_backend = "avahi";
+    // port = 5000;
+    // udp_port_base = 6001;
+    // udp_port_range = 100;
+    statistics = "no";
+    resync_threshold_in_seconds = 0.050;
+    log_verbosity = {{ log_verbosity }};
+    ignore_volume_control = "{{ ignore_volume_control }}";
+    // set this to "yes" if you want the volume to be at 100% no matter what the source's volume control is set to.
+    // volume_range_db = 100 ;
+    alac_decoder = "{{ alac_decoder }}";
+    // This can be "hammerton" or "apple". This advanced setting allows you to choose the original Shairport decoder by David Hammerton or the Apple Lossless Audio Codec (ALAC) decoder written by Apple.
+  };
+  metadata =
+  {
+    enabled = "no";
+    include_cover_art = "no";
+    // pipe_name = "/tmp/shairport-sync-metadata";
+  };
+  alsa =
+  {
+    output_device = "{{ alsa_device }}";
+  };
