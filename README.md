@@ -17,8 +17,9 @@ speakername: "{{ inventory_hostname }} AirSound"
 output_backend: alsa
 ignore_volume_control: "yes"
 alac_decoder: apple
-alsa_device: default
+alsa_device: sysdefault
 ```
+If using sysdefault als ALSA device there might be no output from shairport-sync if at the same time another app is using playback. But as soon as the other app stops, playback from shairport-sync should sound.
 
 ## Example Playbook
 

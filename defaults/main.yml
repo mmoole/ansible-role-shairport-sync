@@ -19,7 +19,7 @@ ignore_volume_control: "yes"
 alac_decoder: apple
 
 # default alsa device for output
-alsa_device: default
+alsa_device: sysdefault
 
 
 # Instead of cutomizing some values (above), you can also customize the whole configuration file per the following variable.

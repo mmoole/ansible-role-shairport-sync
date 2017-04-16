@@ -5,7 +5,7 @@
 - name: install dependencies
   package:
     name: '{{ item }}'
-    state: latest
+    state: present
   with_items:
   - build-essential
   - git
@@ -24,7 +24,7 @@
 
 # vorher jedoch Apple Lossless Audio Codec installieren
 # damit dieser genutzt werden kann
-- name: git clone Apple Lossless Audio Codec
+- name: git clone Apple Lossless Audio Codec from github.com/mikebrady/alac
   git:
     depth: 2
     dest: /usr/src/alac
@@ -47,7 +47,7 @@
     append: yes
     state: present
 
-- name: git clone shairport-sync
+- name: git clone shairport-sync from github.com/mikebrady/shairport-sync
   git:
     depth: 1
     dest: /usr/src/shairport-sync
