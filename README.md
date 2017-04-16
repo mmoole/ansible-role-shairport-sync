@@ -8,7 +8,7 @@ Available variables are listed below, along with default values (see `defaults/m
 
 You have the choice to either customize the whole config as a string containing your shairport-sync configuration:
 ```
-conf: ''
+shairportsync_config: ''
 ```
 ... or you can just use some variables from the configuration:
 ```
@@ -29,7 +29,7 @@ Including an example of how to use your role (for instance, with variables passe
 - hosts: servers
   roles:
     - role: shairport-sync
-      conf: |
+      shairportsync_config: |
         general = {
           name = "Maestro";
           volume_range_db = 30;
